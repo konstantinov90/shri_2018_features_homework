@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Request lib for SHRI 2018</title>
+</head>
+<body>
+    <style>
+        #run {
+            width: 50px;
+            height: 50px;
+            border-radius: 50px;
+            color: white;
+            background: red;
+            position: fixed;
+            right: 10px;
+        }
+        #input {
+            position: fixed;
+            top: 60px;
+            right: 10px;
+        }
+        .images {
+            max-width: 50vh;
+        }
+    </style>
+    <div>
+        <button id="run">RUN!</button>
+    </div>
+    <div class="images"></div>
+    <textarea name="input" id="input" cols="100" rows="40">
+        
+Request
+    .start('https://random.dog/woof.json')
+    .success(resp => resp.json())
+    .success(({ url }) => {
+        let img;
+        if (url.endsWith('mp4')) {
+            img = document.createElement('video');
+        } else {
+            img = document.createElement('img');
+        }
+        img.src = url;
+        img.height = 300;
+        document.querySelector('.images').appendChild(img);
+    })
+    .get('https://thecatapi.com/api/images/get')
+    .success(resp => resp.arrayBuffer())
+    .success(buffer => {
+        let binary = '';
+        const bytes = [].slice.call(new Uint8Array(buffer));
+        
+        bytes.forEach((b) => binary += String.fromCharCode(b));
+        
+        return window.btoa(binary);
+    })
+    .success(imgByteArray => {
+        const img = document.createElement('img');
+        img.src = 'data:image/png;base64,' + imgByteArray;
+        img.height = 300;
+        document.querySelector('.images').appendChild(img);
+    })
+    .get('http://bullshiturl')
+    .success(()=>{
+        console.log('you will not see this');
+    })
+    .error(err => {
+        console.error(err);
+        const fallbackUrl = 'https://random.dog/woof.json';
+        return fallbackUrl;
+    })
+    .get(url => url)
+    .success(resp => resp.json())
+    .success(({ url }) => {
+        let img;
+        if (url.endsWith('mp4')) {
+            img = document.createElement('video');
+        } else {
+            img = document.createElement('img');
+        }
+        img.src = url;
+        img.width = 300;
+        document.querySelector('.images').appendChild(img);
+    })
+    .finish()
+    .then(()=>console.log('done'));
+
+
+
+    </textarea>
+    <script src="request.js"></script>
+    <script>
+        function run() {
+            eval(document.getElementById('input').value);
+        }
+        document.getElementById('run').addEventListener('click', run);
+    </script>
+</body>
+</html>

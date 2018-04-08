@@ -1,0 +1,16 @@
+{
+  "name": "shri_2018_features_homework",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node -r ./request.js -e ;",
+    "dev": "browser-sync --watch * --ignore node_modules"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "browser-sync": "^2.23.6",
+    "node-fetch": "^2.1.2"
+  }
+}
