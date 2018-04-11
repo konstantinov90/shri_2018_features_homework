@@ -5,9 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Request lib for SHRI 2018</title>
+    <link rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 </head>
 <body>
     <style>
+        body {
+            background: url(https://images.pexels.com/photos/207253/pexels-photo-207253.jpeg?auto=compress&cs=tinysrgb&h=650&w=940);
+        }
         #run {
             width: 50px;
             height: 50px;
@@ -15,28 +21,36 @@
             color: white;
             background: red;
             position: fixed;
-            right: 10px;
+            right: 25%;
+            cursor: pointer;
         }
-        #input {
+        #editor { 
             position: fixed;
             top: 60px;
-            right: 10px;
+            right: 0;
+            bottom: 0;
+            left: 50%;
+            border-radius: 5px;
         }
         .images {
-            max-width: 50vh;
+            width: 50vw;
+        }
+        img {
+            border-radius: 5px;
         }
     </style>
     <div>
         <button id="run">RUN!</button>
     </div>
     <div class="images"></div>
-    <textarea name="input" id="input" cols="100" rows="40">
-        
-Request
+    <!-- <textarea name="input" id="input" cols="100" rows="40"> -->
+    <div id="editor">Request
+    // делаем запрос на публичное собачье API
     .start('https://random.dog/woof.json')
     .success(resp => resp.json())
     .success(({ url }) => {
         let img;
+        // могут прислать видюшку
         if (url.endsWith('mp4')) {
             img = document.createElement('video');
         } else {
@@ -44,11 +58,14 @@ Request
         }
         img.src = url;
         img.height = 300;
+        // кидаем картинку в боди
         document.querySelector('.images').appendChild(img);
     })
     .get('https://thecatapi.com/api/images/get')
+    // теперь кошачье API
     .success(resp => resp.arrayBuffer())
     .success(buffer => {
+        // они отдают сразу картинку
         let binary = '';
         const bytes = [].slice.call(new Uint8Array(buffer));
         
@@ -57,16 +74,19 @@ Request
         return window.btoa(binary);
     })
     .success(imgByteArray => {
+        // кидаем в боди
         const img = document.createElement('img');
         img.src = 'data:image/png;base64,' + imgByteArray;
         img.height = 300;
         document.querySelector('.images').appendChild(img);
     })
     .get('http://bullshiturl')
+    // проверим на предмет обработки ошибок
     .success(()=>{
-        console.log('you will not see this');
+        alert('you will not see this');
     })
     .error(err => {
+        // если ошибка - то в качестве утешения добавим еще собачку
         console.error(err);
         const fallbackUrl = 'https://random.dog/woof.json';
         return fallbackUrl;
@@ -74,6 +94,7 @@ Request
     .get(url => url)
     .success(resp => resp.json())
     .success(({ url }) => {
+        // то же, что и в первом запросе
         let img;
         if (url.endsWith('mp4')) {
             img = document.createElement('video');
@@ -85,16 +106,21 @@ Request
         document.querySelector('.images').appendChild(img);
     })
     .finish()
+    // закрываем цепочку и авэйтим промис
     .then(()=>console.log('done'));
 
-
-
-    </textarea>
+</div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.3.3/ace.js" type="text/javascript" charset="utf-8"></script>
     <script src="request.js"></script>
     <script>
+        const editor = ace.edit("editor");
+        editor.setTheme("ace/theme/idle_fingers");
+        editor.session.setMode("ace/mode/javascript");
+
         function run() {
-            eval(document.getElementById('input').value);
+            eval(editor.getValue());
         }
+        
         document.getElementById('run').addEventListener('click', run);
     </script>
 </body>

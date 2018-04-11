@@ -31,9 +31,9 @@ class Request {
      * @param {String} url URL начального запроса
      * @return {Request} новый инстанс
      */
-    static start(url) {
+    static start(url, opts={}) {
         const instance = new Request();
-        instance.chain(() => GetPromise.fetch(url));
+        instance.chain(() => GetPromise.fetch(url, opts));
         return instance;
     }
 
